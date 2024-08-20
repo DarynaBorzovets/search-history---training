@@ -14,6 +14,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BuildingSearchResults from "./details";
 
 const Stack = createStackNavigator();
+
 const MainComponent = () => {
   return (
     <NavigationContainer>
@@ -35,6 +36,31 @@ const MainComponent = () => {
 
 const HomeScreen = ({ navigation }) => {
   const [inputText, setInputText] = useState("");
+  const [recentSearches, setRecentSearches] = useState([
+    "Space Needle",
+    "Columbia Center",
+    "Smith Tower",
+    "Seattle Central Library",
+    "Pike Place Market",
+    "Seattle City Hall",
+    "Seattle Art Museum (SAM)",
+    "CenturyLink Field",
+    "Museum of Pop Culture (MoPOP)",
+    "Amazon Spheres",
+  ]);
+
+  const handleSearch = () => {
+    if (inputText.trim() === "") return; 
+
+    setRecentSearches((prevSearches) => {
+      const updatedSearches = [inputText, ...prevSearches];
+
+      return updatedSearches.slice(0, 10);
+    });
+
+    setInputText("");
+   
+  };
 
   return (
     <View style={styles.container}>
@@ -53,7 +79,7 @@ const HomeScreen = ({ navigation }) => {
 
         <Button
           title="Search"
-          onPress={() => console.log("New search", inputText)}
+          onPress={handleSearch}
         />
         <View
           style={{
@@ -65,19 +91,9 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Previous entries:</Text>
         <FlatList
-          data={[
-            { key: "Space Needle" },
-            { key: "Columbia Center" },
-            { key: "Smith Tower" },
-            { key: "Seattle Central Library" },
-            { key: "Pike Place Market" },
-            { key: "Seattle City Hall" },
-            { key: "Seattle Art Museum (SAM)" },
-            { key: "CenturyLink Field" },
-            { key: "Museum of Pop Culture (MoPOP)" },
-            { key: "Amazon Spheres" },
-          ]}
+          data={recentSearches.map((item) => ({ key: item }))}
           renderItem={({ item }) => <Text style={styles.item}>{item.key}</Text>}
+          keyExtractor={(item) => item.key}
         />
 
         <StatusBar style="auto" />
